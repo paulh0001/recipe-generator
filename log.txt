@@ -1,0 +1,69 @@
+11/15
+
+i ran python main.py and the API key loaded successfully 
+
+
+to load and activate environment run: 
+
+1.  cd C:\Users\paulh_faob3ub\OneDrive\Desktop\Creative\Making\Programming\recipe_generator
+2.  myenv\Scripts\activate
+3. to deactivate: deactivate
+
+11/16
+
+I wrote further on the python script and got to the point where i can input ingredients in terminal that are sent to gpt. 
+
+Unfortunately I reached the limit of my quota (credits), i tried to purchase more but my payment was declined, I will try to buy again another time.
+
+
+11/17
+
+I got it to work, not with gpt but with groq's llama, here is the working code: 
+
+import requests
+import os
+from dotenv import load_dotenv
+
+# Load API key from .env file
+load_dotenv()
+api_key = os.getenv("GROQ_API_KEY")
+
+# Prompt user for ingredients
+ingredients = input("Enter ingredients you have (comma-separated): ")
+
+# Create prompt
+prompt = f"Generate a recipe using these ingredients: {ingredients}."
+
+# Set up the request URL, headers, and data
+url = "https://api.groq.com/openai/v1/chat/completions"  # Replace with the actual endpoint if different
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+}
+data = {
+    "model": "llama3-8b-8192",  # Replace with the correct model ID from Groq if necessary
+    "messages": [
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ],
+    "stream": False
+}
+
+# Send request to Groq API
+response = requests.post(url, headers=headers, json=data)
+
+# Check if the response was successful
+if response.status_code == 200:
+    # Parse and print the recipe from the response
+    recipe = response.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+    print("\nHere’s a recipe you can try:")
+    print(recipe)
+else:
+    # Print error message
+    print(f"Error: {response.status_code} - {response.text}")
+
+
+    
+

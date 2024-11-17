@@ -1,0 +1,55 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+
+        .recipe-output {
+            margin-top: 20px;
+            white-space: pre-line;
+            line-height: 1.5;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Recipe Generator</h1>
+    <p>Enter ingredients to generate a recipe:</p>
+    <input type="text" id="ingredients" placeholder="e.g., tomatoes, onions, garlic">
+    <button onclick="generateRecipe()">Generate Recipe</button>
+    
+    <div id="recipe-output" class="recipe-output"></div>
+
+    <script>
+        async function generateRecipe() {
+            const ingredients = document.getElementById("ingredients").value;
+            const response = await fetch("/generate_recipe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ingredients })
+            });
+
+            const data = await response.json();
+            const recipeOutput = document.getElementById("recipe-output");
+            
+            if (data.recipe) {
+                recipeOutput.innerHTML = data.recipe.replace(/\n/g, "<br>");
+            } else {
+                recipeOutput.textContent = `Error: ${data.error}`;
+            }
+        }
+    </script>
+    </script>
+</body>
+</html>
